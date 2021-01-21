@@ -1,3 +1,73 @@
+void queryStatusFromWheel() 
+{
+
+//  byte electricAngle[]  = {0xED, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+//  byte actualSpeed[]    = {0xED, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+  byte current[]        = {0xED, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+//  byte rotorMachanicalPosition[] = {0xED, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+//  byte voltage[]        = {0xED, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+//  byte temperature[]    = {0xED, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+//  byte errorCode[]      = {0xED, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+//  byte rotorPosition[]  = {0xED, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+//  byte programVersion[] = {0xED, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+
+  UDPFromWheel.flush();
+
+  UDPToWheel.beginPacket(steerSet.ipDestinationWheel, steerSet.portSendToWheel);
+  UDPToWheel.write(current, sizeof(current));
+  UDPToWheel.endPacket();  
+
+}
+
+
+void getDataFromWheel()
+{
+
+  byte incomingBytesWheel[13] = { 0,0,0,0,0,0,0,0,0,0,0,0,0 };
+  byte incomingBytesQueryWheel[6] = { 0,0,0,0,0,0 };
+
+// UDPFromWheel.setTimeout(20);
+
+    byte lengWheel = UDPFromWheel.parsePacket();
+    Serial.print("Laenge ");
+    Serial.println(lengWheel);
+    
+    if (lengWheel == 13) {
+      UDPFromWheel.read(incomingBytesWheel, lengWheel);
+      UDPFromWheel.flush();
+      
+      for (byte n = 0; n < lengWheel; n++) {
+          if (steerSet.debugmode) { Serial.print(incomingBytesWheel[n]); Serial.print(" "); }
+          DataFromWheel[n] = incomingBytesWheel[n];
+          Serial.print(DataFromWheel[n], HEX);
+          Serial.print(" ");
+          incomingBytesWheel[n] = 0;
+          DataFromWheel[n] = 0;
+          };
+
+    Serial.println();
+
+    } else if (lengWheel == 6) {
+      UDPFromWheel.read(incomingBytesQueryWheel, lengWheel);
+      UDPFromWheel.flush();
+
+      for (byte n = 0; n < lengWheel; n++) {
+          if (steerSet.debugmode) { Serial.print(incomingBytesQueryWheel[n]); Serial.print(" "); }
+          DataFromQueryWheel[n] = incomingBytesQueryWheel[n];
+          Serial.print(DataFromQueryWheel[n], HEX);
+          Serial.print(" ");
+          incomingBytesQueryWheel[n] = 0;
+          DataFromQueryWheel[n] = 0;
+          };
+    Serial.println();
+    };
+    
+
+    
+    
+}
+
+
 
 void getDataFromAOG()
 {

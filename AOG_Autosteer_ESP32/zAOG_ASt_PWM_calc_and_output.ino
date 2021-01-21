@@ -75,6 +75,9 @@ void motorDrive(void)
     case 4:
       motorDrive_IBT_Danfoss();
       break;
+    case 5:
+      motorDrive_Keya_v2020();
+      break;
     default:
       // if nothing else matches no Output
     break;
@@ -183,4 +186,69 @@ void motorDrive_IBT_Danfoss(void)
     ledcWrite(0, pwmOut);  // channel 0 = PWM_PIN
   }
 
+
+//--------------------------------------------------------------------
+// Keya Motors http://www.dcmotorkeya.com/ manufactured till 2020
+//---------------------------------------------------------------------
+void motorDrive_Keya_v2020(void) 
+
+  { 
+    pwmDrive = pwmDrive * 4; // Gain is at about 30
+
+    if (pwmDrive > 1000) pwmDrive = 1000;
+    if (pwmDrive < -1000) pwmDrive = -1000;
+
+    byte off[] = {0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+    byte hold[] = {0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+
+    byte hi, lo;
+    byte steer[] =   {0x11, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  };
+
+    if (pwmDrive > 0)
+    {
+      steer[4] = 0x00;
+      steer[5] = 0x00;
+    }
+    else
+    {
+      steer[4] = 0xFF;
+      steer[5] = 0xFF;
+    }
+
+    hi =  ( (pwmDrive) >> (8) ); // keep upper 8 bits
+    lo = ( (pwmDrive) & (0xff) ); // keep lower 8 bits
+
+    steer[6] = hi;
+    steer[7] = lo;
+
+   if (steerEnable == true && pwmDrive != 0) { 
+    Serial.println(pwmDrive);
+    UDPToWheel.beginPacket(steerSet.ipDestinationWheel, steerSet.portSendToWheel);
+    UDPToWheel.write(steer, sizeof(steer));
+    UDPToWheel.endPacket();
+   }
+
+
+
+// ********************** OFF *************************
+   
+   if (steerEnable == false) { 
+    pwmDrive=0;
+    Serial.println("off");
+    UDPToWheel.beginPacket(steerSet.ipDestinationWheel, steerSet.portSendToWheel);
+    UDPToWheel.write(off, sizeof(off));
+    UDPToWheel.endPacket();
+   }
+
+// ********************** CENTER *************************
+
+   if (steerEnable == true && pwmDrive == 0) { 
+//   if (steerEnable == true && pwmDrive <= 1 && pwmDrive >= -1) { 
+    Serial.println("hold");
+    UDPToWheel.beginPacket(steerSet.ipDestinationWheel, steerSet.portSendToWheel);
+    UDPToWheel.write(hold, sizeof(hold));
+    UDPToWheel.endPacket();
+    }
+
+  }
  

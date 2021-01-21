@@ -11,31 +11,33 @@
 
 
 
-#define useLED_BUILTIN  1	          // some ESP board have a build in LED, some not
+#define useLED_BUILTIN  0	          // some ESP board have a build in LED, some not
 
 #define HardwarePlatform  0         //0 = runs on ESP32 1 = run on NANO 33 IoT (not working yet!!)
 
 
 struct Storage {
-	char ssid[24] = "Fendt_209V";     // WiFi network Client name
-	char password[24] = "";           // WiFi network password
+	char ssid[24] = "HUAWEI-5F9B";     // WiFi network Client name
+	char password[24] = "94425292";           // WiFi network password
 	uint16_t timeoutRouter = 100;     // Time (seconds) to wait for WIFI access, after that own Access Point starts
 
 	uint8_t aogVersion = 17;			  // Version number for version check 4.3.10 = 4+3+10 = 17	
 
 	uint8_t DataTransVia = 8;         //transfer data via 0 = USB 10byte / 1 = USB 10 byte 2x / 4 = USB 8 byte / 7 = UDP / 8 = UDP 2x
 
-	uint8_t output_type = 2;          //set to 1  if you want to use Stering Motor + Cytron MD30C Driver
+	uint8_t output_type = 5;          //set to 1  if you want to use Stering Motor + Cytron MD30C Driver
 								      //set to 2  if you want to use Stering Motor + IBT 2  Driver
 								      //set to 3  if you want to use IBT 2  Driver + PWM 2-Coil Valve
 								      //set to 4  if you want to use  IBT 2  Driver + Danfoss Valve PVE A/H/M
+                      //set to 5  if you want to use Keya motor via UDP, Keya motor manufactured till 2020
+	
 	uint16_t PWMOutFrequ = 20000;     //PWM frequency for motordriver: 1000Hz:for low heat at PWM device 20000Hz: not hearable
 
 	uint8_t	MotorDriveDirection = 0;  // 0 = normal, 1 = inverted
 
 	uint8_t MotorSlowDriveDegrees = 5;	  //How many degrees before decreasing Max PWM
 
-	uint8_t input_type = 2;           //0 = No ADS installed, Wheel Angle Sensor connected directly to ESP at GPIO 4 (attention 3,3V only)
+	uint8_t input_type = 1;           //0 = No ADS installed, Wheel Angle Sensor connected directly to ESP at GPIO 4 (attention 3,3V only)
 								                    //1 = Single Mode of ADS1115 - Sensor Signal at A0 (ADS)
 								                    //2 = Differential Mode - Connect Sensor GND to A1, Signal to A0
 
@@ -49,25 +51,25 @@ struct Storage {
 
 	uint8_t roll_MAX_STEP = 10;		  // max roll step per loop (5-20) higher = filter less
 
-	uint8_t Invert_WAS = 0;           // set to 1 to Change Direction of Wheel Angle Sensor - to + 
+	uint8_t Invert_WAS = 1;           // set to 1 to Change Direction of Wheel Angle Sensor - to + 
 
 	uint8_t ShaftEncoder = 0;         // Steering Wheel ENCODER Installed
 	uint8_t pulseCountMax = 3;        // Switch off Autosteer after x Pulses from Steering wheel encoder 
 
-	uint16_t SteerPosZero = 10300;	  // first value for steer zero position ADS: 11000 for EPS32 AD PIN: 2048
+	uint16_t SteerPosZero = 7370;	  // first value for steer zero position ADS: 11000 for EPS32 AD PIN: 2048
 
-	uint8_t AckermanFix = 78;		  //if values for left and right are the same: 100 
+	uint8_t AckermanFix = 139;		  //if values for left and right are the same: 100 
 
 	uint8_t SteerSwitch = 1;          //0 = enable = switch high (3,3V) //1 = enable = switch low(GND) //2 = toggle = button to low(GND)
 								      //3 = enable = button to high (3,3V), disable = button to low (GND), neutral = 1,65V
 
 	uint8_t SteerRemoteSwitch = 0;    //not supported by V4 0 = not installed, 1 = switch to GND, 2 = use steer switch may not work, just a test
 
-	uint8_t WorkSW_mode = 2;          // 0 = disabled   // 1 = digital ON/OFF // 2 = analog Value 0...4095 (0 - 3,3V)
+	uint8_t WorkSW_mode = 1;          // 0 = disabled   // 1 = digital ON/OFF // 2 = analog Value 0...4095 (0 - 3,3V)
 
 	uint8_t Invert_WorkSW = 0;        // 0 = Hitch raised -> High    // 1 = Hitch raised -> Low
 
-	uint8_t autoSteerMinSpeed4 = 2;    //AOG sends speed * 4 as byte so lowest is 1 = 0.25 km/h 2=0.5 3=0.75 4=1 km/h
+	uint8_t autoSteerMinSpeed4 = 1;    //AOG sends speed * 4 as byte so lowest is 1 = 0.25 km/h 2=0.5 3=0.75 4=1 km/h
 
 	uint8_t autosteerMaxSpeed4 = 120;  //Max speed to use autosteer x4
 
@@ -77,8 +79,8 @@ struct Storage {
 	// IO pins --------------------------------
 
 	// set to 255 for unused !!!!!
-	uint8_t SDA = 32;//21			        //I2C Pins
-	uint8_t SCL = 15;//22
+	uint8_t SDA = 27;//21			        //I2C Pins
+	uint8_t SCL = 26;//22
 
 	uint8_t AutosteerLED_PIN = 19;    //light on active autosteer
 	uint8_t LEDWiFi_PIN = 18;         //light on WiFi connected, flashes on searching Network
@@ -89,7 +91,7 @@ struct Storage {
 	uint8_t Relays_ON = HIGH;		      //HIGH = Relay on high, LOW = Relay on low
 
 	uint8_t W_A_S = 255;              //PIN for Wheel Angle Sensor (none, if ADS used)
-	uint8_t WORKSW_PIN = 39;          //PIN for workswitch (can be analog or on/off switch see WorkSW_mode)
+	uint8_t WORKSW_PIN = 4;          //PIN for workswitch (can be analog or on/off switch see WorkSW_mode)
 	uint8_t STEERSW_PIN = 5;          //Pin for steer button or switch (see SteerSwitch)
 	uint8_t REMOTE_PIN = 255;		  //PIN for AOG autosteer ON/OFF
 	uint8_t encA_PIN = 255;           //Pin for steer encoder, to turn off autosteer if steering wheel is used
@@ -114,20 +116,26 @@ struct Storage {
 	uint16_t portAOG = 8888;                    // port to listen for AOG
 
 	//IP address to send UDP data to:
-	uint8_t ipDestination[4] = { 192, 168, 1, 255 };
+	uint8_t ipDestination[4] = { 192, 168, 1, 100 };
 	uint16_t portDestination = 9999;            // Port of AOG that listens
 
-	//filter variables set by AOG via PGN settings sentence, stored automatically in EEPROM for faster start
+  //IP address to send UDP data to Wheel:
+  uint8_t ipDestinationWheel[4] = { 192, 168, 1, 72 };
+  uint16_t portSendToWheel = 8877;            // Port send to Keya Wheel
+  uint16_t portReceiveFromWheel = 8866;            // Port recieve from Keya Wheel
+  
+  //filter variables set by AOG via PGN settings sentence, stored automatically in EEPROM for faster start
 	float Ko = 0.05f;   //overall gain  
 	float Kp = 20.0f;    //proportional gain  
 	float Ki = 0.001f;  //integral gain
 	float Kd = 1.0f;    //derivative gain 
-	float steeringPositionZero = 12540;  uint8_t minPWMValue = 30;
-	uint16_t maxIntegralValue = 20; //max PWM value for integral PID component
-	float steerSensorCounts = 100;  uint16_t roll_corr = 200;
+//	float steeringPositionZero = 12540;  uint8_t minPWMValue = 30;
+  float steeringPositionZero = SteerPosZero;  uint8_t minPWMValue = 1;
+  uint16_t maxIntegralValue = 20; //max PWM value for integral PID component
+	float steerSensorCounts = 225;  uint16_t roll_corr = 200;
 	float deadZone = 0.0f;  //band of no action
-	byte minPWM = 40;
-	byte maxPWM = 150;//max PWM value
+	byte minPWM = 1;
+	byte maxPWM = 254;//max PWM value
 	
 	
 	boolean debugmode = false;
@@ -135,7 +143,7 @@ struct Storage {
 
 };  Storage steerSet;
 
-boolean EEPROM_clear = false;  //set to true when changing settings to write them as default values: true -> flash -> boot -> false -> flash again
+boolean EEPROM_clear = true;  //set to true when changing settings to write them as default values: true -> flash -> boot -> false -> flash again
 
 
 //libraries -------------------------------
@@ -170,6 +178,8 @@ BNO055 IMU(A);
 //WiFiClient client_page;
 WiFiUDP UDPFromAOG;
 WiFiUDP UDPToAOG;
+WiFiUDP UDPToWheel;
+WiFiUDP UDPFromWheel;
 WebServer server(80);
 
 // Variables ------------------------------
@@ -229,6 +239,8 @@ int maxIntegralValue = 20; //max PWM value for integral PID component
 byte toSend[] = { 0,0,0,0,0,0,0,0,0,0 };
 //data that will be received from server
 uint8_t DataFromAOG[10];
+uint8_t DataFromWheel[13];
+uint8_t DataFromQueryWheel[6];
 
 //webpage
 long argVal = 0;
@@ -303,6 +315,9 @@ void loop() {
 #endif
 
 	getDataFromAOG();
+//  getDataFromWheel();
+// queryStatusFromWheel();
+
 
 	//check, if steering wheel is moved. Debounce set to LOW in timed loop 10Hz
 	if (steerSet.ShaftEncoder == 1) {

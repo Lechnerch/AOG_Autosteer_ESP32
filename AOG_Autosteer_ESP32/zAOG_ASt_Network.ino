@@ -1,4 +1,4 @@
-// WIFI handling 1. März 2020 for ESP32 and Nano 33 IoT -------------------------------------------
+// WIFI handling 1. Mï¿½rz 2020 for ESP32 and Nano 33 IoT -------------------------------------------
 
 void WiFi_Start_STA() {
     unsigned long timeout, timeout2;
@@ -177,5 +177,13 @@ void UDP_Start()
 		Serial.println(steerSet.portAOG);
 		getDataFromAOG();
 	}
+  delay(300);
+  if (UDPFromWheel.begin(steerSet.portReceiveFromWheel))
+  {
+    Serial.print("UDP listening for Wheel data on IP: ");
+    Serial.println(WiFi.localIP());
+    Serial.print(" on port: ");
+    Serial.println(steerSet.portReceiveFromWheel);
+    getDataFromWheel();
+  }
 }
-
